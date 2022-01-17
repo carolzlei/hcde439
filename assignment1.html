@@ -14,7 +14,7 @@
         <div class="header">
             <h2>BLINK!</h2>
             <p>
-            <img src="a1-board.jpeg" width=400></a>
+            <img src="a1-board.jpeg" width=750></a>
             </p>
     
             <h3>
@@ -30,7 +30,7 @@
             The Schematic
             </h3>
             <p>
-            <img src="a1-schematics.png" width=400></a>
+            <img src="a1-schematics.png" width=1000></a>
             </p>
             <p>
             This is the schematic for my LED blinking. I have connected the 5 LEDs on the Arduino pins 9 to 13.
@@ -42,9 +42,65 @@
             <h3>
             The Code
             </h3>
-            <p>
-            <img src="red-panda.jpg" width=400></a>
-            </p>
+            <pre>
+                <code>
+                    // Assignment 1: Blink! 
+                    // Carol Lei 
+                    // make at least 3 LED's blink in a desired pattern
+
+                    const int buttonPin = 2;     // the number of the pushbutton pin
+
+                    const int ledPinBlue =  13;      // the number of the LED pin
+                    const int ledPinYellow =  12;
+                    const int ledPinGreen =  11;
+                    const int ledPinRed =  10; 
+                    const int ledPinRGB =  9;
+
+                    // variables will change:
+                    int buttonState = 0;         // variable for reading the pushbutton status
+
+                    void setup() {
+                      // initialize the LED pin as an output:
+                      pinMode(ledPinBlue, OUTPUT);
+                      pinMode(ledPinYellow, OUTPUT);
+                      pinMode(ledPinGreen, OUTPUT);
+                      pinMode(ledPinRed, OUTPUT);
+                      pinMode(ledPinRGB, OUTPUT);
+                      // initialize the pushbutton pin as an input:
+                      pinMode(buttonPin, INPUT);
+                    }
+
+                    void loop() {
+                      // read the state of the pushbutton value:
+                      buttonState = digitalRead(buttonPin);
+
+                      // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
+                      if (buttonState == HIGH) {
+                        // turn LED on:
+                        digitalWrite(ledPinBlue, HIGH);
+                        delay(200);
+                        digitalWrite(ledPinBlue, LOW);
+                        digitalWrite(ledPinYellow, HIGH);
+                        delay(200);
+                        digitalWrite(ledPinYellow, LOW);
+                        digitalWrite(ledPinGreen, HIGH);
+                        delay(200);
+                        digitalWrite(ledPinGreen, LOW);
+                        digitalWrite(ledPinRed, HIGH);
+                        delay(200); 
+                        digitalWrite(ledPinRed, LOW);
+                        digitalWrite(ledPinRGB, HIGH);
+                        delay(200);
+                        digitalWrite(ledPinRGB, LOW);
+                      } else {
+                        // turn LED off:
+                        digitalWrite(ledPinBlue, LOW);
+                        digitalWrite(ledPinYellow, LOW);
+                        digitalWrite(ledPinGreen, LOW);
+                      }
+                    }       
+                </code>
+            </pre>
             <p>
             This is the code I used to develop the behavior I wanted. See the comments in the code for further explanations.  
             </p>
@@ -53,7 +109,7 @@
             BLINK!
             </h3>
             <p>
-            <img src="a1-blink.gif" width=400></a>
+            <img src="a1-blink.gif" width=750></a>
             </p>
             <p>
             Push for the blinking lights! ✨🤩 
