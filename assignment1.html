@@ -44,61 +44,52 @@
             </h3>
             <pre>
                 <code>
-                    // Assignment 1: Blink! 
-                    // Carol Lei 
-                    // make at least 3 LED's blink in a desired pattern
+// Assignment 1: Blink! 
+// Carol Lei 
+// make at least 3 LED's blink in a desired pattern
 
-                    const int buttonPin = 2;     // the number of the pushbutton pin
+const int buttonPin = 2;        // the number of the pushbutton pin
 
-                    const int ledPinBlue =  13;      // the number of the LED pin
-                    const int ledPinYellow =  12;
-                    const int ledPinGreen =  11;
-                    const int ledPinRed =  10; 
-                    const int ledPinRGB =  9;
+const int ledPinBlue =  13;     // Blue LED in pin 13
+const int ledPinYellow =  12;   // Yellow LED in pin 12
+const int ledPinGreen =  11;    // Green LED in pin 11
+const int ledPinRed =  10;      // Red LED in pin 10
+const int ledPinWhite =  9;     // White LED in pin 9
 
-                    // variables will change:
-                    int buttonState = 0;         // variable for reading the pushbutton status
 
-                    void setup() {
-                      // initialize the LED pin as an output:
-                      pinMode(ledPinBlue, OUTPUT);
-                      pinMode(ledPinYellow, OUTPUT);
-                      pinMode(ledPinGreen, OUTPUT);
-                      pinMode(ledPinRed, OUTPUT);
-                      pinMode(ledPinRGB, OUTPUT);
-                      // initialize the pushbutton pin as an input:
-                      pinMode(buttonPin, INPUT);
-                    }
+int buttonState = 0;            // variable for reading the pushbutton status
 
-                    void loop() {
-                      // read the state of the pushbutton value:
-                      buttonState = digitalRead(buttonPin);
+void setup() {
+  pinMode(ledPinBlue, OUTPUT);  // initialize the Blue LED pin as an output
+  pinMode(ledPinYellow, OUTPUT);// initialize the Yellow LED pin as an output
+  pinMode(ledPinGreen, OUTPUT); // initialize the Green LED pin as an output
+  pinMode(ledPinRed, OUTPUT);   // initialize the Red LED pin as an output
+  pinMode(ledPinWhite, OUTPUT); // initialize the White LED pin as an output
+  
+  pinMode(buttonPin, INPUT);    // initialize the pushbutton pin as an input
+}
 
-                      // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-                      if (buttonState == HIGH) {
-                        // turn LED on:
-                        digitalWrite(ledPinBlue, HIGH);
-                        delay(200);
-                        digitalWrite(ledPinBlue, LOW);
-                        digitalWrite(ledPinYellow, HIGH);
-                        delay(200);
-                        digitalWrite(ledPinYellow, LOW);
-                        digitalWrite(ledPinGreen, HIGH);
-                        delay(200);
-                        digitalWrite(ledPinGreen, LOW);
-                        digitalWrite(ledPinRed, HIGH);
-                        delay(200); 
-                        digitalWrite(ledPinRed, LOW);
-                        digitalWrite(ledPinRGB, HIGH);
-                        delay(200);
-                        digitalWrite(ledPinRGB, LOW);
-                      } else {
-                        // turn LED off:
-                        digitalWrite(ledPinBlue, LOW);
-                        digitalWrite(ledPinYellow, LOW);
-                        digitalWrite(ledPinGreen, LOW);
-                      }
-                    }       
+void loop() {
+  buttonState = digitalRead(buttonPin); // read the state of the pushbutton value
+  
+  if (buttonState == HIGH) {            // check if the pushbutton is pressed. If it is, the buttonState is HIGH
+    digitalWrite(ledPinBlue, HIGH);     // turn on Blue LED
+    delay(200);                         // turn on Blue LED for 200 ms
+    digitalWrite(ledPinBlue, LOW);      // turn off Blue LED after 200 ms
+    digitalWrite(ledPinYellow, HIGH);   // turn on Yellow LED
+    delay(200);                         // turn on Yellow LED for 200 ms
+    digitalWrite(ledPinYellow, LOW);    // turn off Yellow LED after 200 ms
+    digitalWrite(ledPinGreen, HIGH);    // turn on Green LED
+    delay(200);                         // turn on Green LED for 200 ms
+    digitalWrite(ledPinGreen, LOW);     // turn off Green LED after 200 ms
+    digitalWrite(ledPinRed, HIGH);      // turn on Red LED
+    delay(200);                         // turn on Red LED for 200 ms
+    digitalWrite(ledPinRed, LOW);       // turn off Red LED after 200 ms
+    digitalWrite(ledPinWhite, HIGH);    // turn on White LED
+    delay(200);                         // turn on White LED for 200 ms
+    digitalWrite(ledPinWhite, LOW);     // turn off White LED after 200 ms
+    
+}
                 </code>
             </pre>
             <p>
