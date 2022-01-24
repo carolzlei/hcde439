@@ -39,8 +39,14 @@
             <p>
             This is the schematic for my LED lights fading. 
                 I am using Ohm's Law, V=IR, to calculate the resistance needed for 20 mA curent to flow through each of the LEDs.
-                I have done two calculations for the two voltage drops that are seen in the LED lights, blue and white see a 3.3V drop, while red, yellow, and green see a 1.8V drop. 
-                Because I do not have resistors with the exact values 85 and 160 ohms, I used 100 ohms and 220 ohm respectively. 
+                I have done two calculations for the two voltage drops that are seen in the LED lights, 
+                blue and white see a 3.3V drop, while red, yellow, and green see a 1.8V drop. 
+                Because I do not have resistors with the exact values 85 and 160 ohms, I used 100 ohms and 220 ohm respectively.
+
+                <br> 
+                For the button that is connected to Pin2, it is reading either a HIGH or a LOW when clicked and defaulted unclicked, respectively. 
+                For this button and circuit, a 10K resistor is common, so that is what is on my board. 
+                When the switch is closed (button is clicked), there is a 0.5 mA of current through the button. 
             </p>
 
             <h3>
@@ -97,7 +103,7 @@ void loop() {
             </p>
 
             <h3>
-            Lights out, party time!
+            Push for party lights!
             </h3>
             <p>
             <img src="a2-fade.gif" width=750></a>
