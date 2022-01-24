@@ -14,7 +14,7 @@
         <div class="header">
             <h2>FADEe...</h2>
             <p>
-            <img src="a1-board.jpeg" width=750></a>
+            <img src="a2.jpeg" width=750></a>
             </p>
             <p>
                 caption
@@ -24,20 +24,22 @@
             Assignment
             </h3>
             <p>
-            For this assignment, I connected five LED's to a button on my breadboard. 
-                When the button is pressed, the LED's will light one-by-one each for 200 milliseconds. 
-                The LED lights light up in the following order – blue, yellow, green, red and white.
-                <br> *For this assignment's documentation, I am focusing on the LED functions, less so the button. I added the button for fun!*
+            For this assignment, I connected 2 LED's to a light sensor on my breadboard.
+                I wanted to represent the lighting of my room throughout the day. When the sun is out, I have a bright white light on.
+                When the sun sets, I have a color fading bedside lamp. 
+                On this board, the light sensor senses the brightness to control which LED is turned on. When it is bright out, the white LED is turned on. 
+                When it is darker out, the RBG LED is turned on. 
             </p>
     
             <h3>
             The Schematic
             </h3>
             <p>
-            <img src="a1-schematics.png" width=1000></a>
+            <img src="a2-schematics.png" width=1000></a>
             </p>
             <p>
-            This is the schematic for my LED blinking. I have connected the 5 LEDs on the Arduino pins 9 to 13.
+            This is the schematic for my LED lights fading. 
+                
                 I am using Ohm's Law, V=IR, to calculate the resistance needed for 20 mA curent to flow through each of the LEDs. 
                 I have done two calculations for the two voltage drops that are seen in the LED lights. 
                 Blue and white see a 3.3V drop, while red, yellow, and green see a 1.8V drop. 
@@ -101,7 +103,7 @@ void loop() {
             Lights out, party time!
             </h3>
             <p>
-            <img src="a1-blink.gif" width=750></a>
+            <img src="a2-fade.gif" width=750></a>
             </p>
             <p>
             Turn on the lights for a focused, white light; turn out the lights for party-like fading lights! 
