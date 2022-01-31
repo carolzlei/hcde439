@@ -12,36 +12,47 @@
     <body> 
 
         <div class="header">
-            <h2>FADEe...</h2>
+            <h2>Input and Output</h2>
             <p>
-            <img src="a2.jpeg" width=750></a>
-            </p>
-            <p>
-                Here is my breadboard with 2 LED lights and a light sensor that controls those LEDs.
+            <img src="a3-board1.jpeg" width=750></a>
             </p>
     
             <h3>
             Assignment
             </h3>
             <p>
-            For this assignment, I connected 2 LED's to a light sensor on my breadboard.
-                I wanted to represent the lighting of my room throughout the day. When the sun is out, I have a bright white light on.
-                When the sun sets, I have a color fading bedside lamp. 
-                On this board, the light sensor senses the brightness to control which LED is turned on. When it is bright out, the white LED is turned on. 
-                When it is darker out, the RBG LED is turned on. 
+            For this assignment, I connected one RGB LED to a photoresistor on my breadboard.
+                I wanted to represent the lighting of my room throughout the day. When the sun is out, I try to have no lights turned on.
+                When the sun sets, I have a pleasant blue-lavendar bedside lamp. 
+                On this board, the photoresistor senses the brightness to control how and when the LED is turned on. 
+                The RGB LED glows in a brightness inverse to the sensed brightness. 
             </p>
     
             <h3>
             The Schematic
             </h3>
             <p>
-            <img src="a2-schematics.png" width=1000></a>
+            <img src="a3-schematics.png" width=1000></a>
             </p>
             <p>
-            This is the schematic for my LED lights fading. 
-                I am using Ohm's Law, V=IR, to calculate the resistance needed for 20 mA curent to flow through each of the LEDs.
-                I have done two calculations for the two voltage drops that are seen in the LED lights, blue and white see a 3.3V drop, while red, yellow, and green see a 1.8V drop. 
-                Because I do not have resistors with the exact values 85 and 160 ohms, I used 100 ohms and 220 ohm respectively. 
+              Here is my schematic for the RGB LED and the photoresistor.  
+            </p>
+
+            <h3>
+              The Calculations
+            </h3>
+            <p>
+              <img src="a3-LEDcalculations.png" width=1000></a>
+            </p>
+            <p>
+                Here are my calculations for LED resistance.  
+            </p>
+
+            <p>
+              <img src="a3-resistorcalculations.png" width=1000></a>
+            </p>
+            <p>
+                Here is my calculation for the voltage divider. I am using a voltage divider to control the flow of current.   
             </p>
 
             <h3>
@@ -49,62 +60,89 @@
             </h3>
             <pre>
                 <code>
-const int R = 11;
-const int G = 10;
-const int B = 9;
-const int W = 8;
-
-void setup() {
-  Serial.begin(9600);       // initialize serial communication at 9600 bits per second
-
-  pinMode(R, OUTPUT);
-  pinMode(G, OUTPUT);
-  pinMode(B, OUTPUT);
-  pinMode(W, OUTPUT);
-}
-
-// the loop routine runs over and over again forever
-void loop() {
-  int sensorValue = analogRead(A0);                       // read the analog in value
-  int outputValue = map(sensorValue, 500, 900, 255, 0);   // map it to the range of the analog out
-
-  while(sensorValue < 700){
-    digitalWrite(W, LOW);
-    for(int i = 0; i < 256 && sensorValue < 700;i+=10){
-      sensorValue = analogRead(A0);
-      analogWrite(B, i);
-      delay(100);
-    }
-    for(int i = 0; i < 256 && sensorValue < 700;i+=10){
-      sensorValue = analogRead(A0);
-      analogWrite(G, i);
-      delay(100);
-    }
-    for(int i = 0; i < 256  && sensorValue < 700;i+=10){
-      sensorValue = analogRead(A0);
-      analogWrite(R, i);
-      delay(100);
-    }
-  }
-  digitalWrite(W, HIGH);
-  analogWrite(R, 0);
-  analogWrite(B, 0);
-  analogWrite(G, 0);
-}
+                  // Carol Lei, assignment 3
+                  // *Code credit to Arduino example code, Callibration
+                  
+                  const int R = 11;            // red LED to ~pin11
+                  const int G = 10;            // red LED to ~pin10
+                  const int B =  9;            // red LED to ~pin9
+                  
+                  int sensorValue = 0;         // the sensor value
+                  int sensorMin = 1023;        // minimum sensor value
+                  int sensorMax = 0;           // maximum sensor value
+                  
+                  void setup() {
+                    Serial.begin(9600);        // initialize serial communication at 9600 bits per second
+                  
+                    while (millis() < 5000) {        // *while millisec is less than 5000
+                      sensorValue = analogRead(A0);  // *read the value of pin A0, connected to photoresistor
+                      
+                      if (sensorValue > sensorMax) { // *if sensor value is greater than sensor max
+                        sensorMax = sensorValue;     // *set sensor max to current sensor value
+                      }
+                      if (sensorValue < sensorMin) { // *if sensor value is less than sensor min
+                        sensorMin = sensorValue;     // *set sensor min to current sensor value
+                      }
+                    }
+                    
+                    pinMode(R, OUTPUT);     // initialize the Red LED as output
+                    pinMode(G, OUTPUT);     // initialize the Green LED as output
+                    pinMode(B, OUTPUT);     // initialize the Blue LED as output
+                  }
+                  
+                  void loop() {
+                    sensorValue = analogRead(A0);     // read the value of pin A0, connected to photoresistor
+                    sensorValue = constrain(sensorValue, sensorMin, sensorMax); // *constrain the sensor value to sensor min and sensor max in case sensor value is outside range 
+                    
+                    Serial.print("Sensed brightness = ");   // print to serial monitor brightness value
+                    Serial.print(sensorValue);              // print to serial monitor sensor value
+                    Serial.println();                       // print a new line
+                    
+                    sensorValue = map(sensorValue, sensorMin, sensorMax, 255, 0);    // map sensor value to appropriate LED value between 255 and 0, when bright LED off/dim, when dark LED bright
+                  
+                    analogWrite(R, sensorValue/5);    // write to Red LED sensor value divided by 5 (i liked this periwinkle color)
+                    analogWrite(G, sensorValue/3);    // write to Red LED sensor value divided by 3 (i liked this periwinkle color)
+                    analogWrite(B, sensorValue);      // write to Red LED sensor value (i liked this periwinkle color)
+                  
+                    Serial.print("LED Value = ");     // print to serial monitor mapped LED value
+                    Serial.println(sensorValue);      // print to serial monitor sensor value
+                    Serial.println();                 // print a new line
+                  }
                 </code>
             </pre>
-            <p>
+            <p> 
             This is the code I used to develop the behavior I wanted. See the comments in the code for further explanations.  
             </p>
-
+            
             <h3>
-            Lights out, party time!
+              Serial Monitor Output
             </h3>
             <p>
-            <img src="ARCHIVED a2-fade.gif" width=750></a>
+              <img src="a3-serialmonitor.png" width=750></a>
             </p>
             <p>
-            Turn on the lights for a focused, white light; turn out the lights for party-like fading lights! 
+              Here is a sample screenshot of the output text in my serial monitor.
+            </p>
+
+
+            <h3>
+              My breadboard
+            </h3>
+            <p>
+              <img src="a3-board.jpeg" width=750></a>
+              </p>
+              <p>
+                  Here is my breadboard with one RGB LED light and a light sensor that controls that LED.
+              </p>
+
+            <h3>
+            Lights out, periwinkle time!
+            </h3>
+            <p>
+            <img src="a3-inputoutput.gif" width=750></a>
+            </p>
+            <p>
+            Turn out the lights for a pretty preiwinkle LED light!
             </p>
 
 
