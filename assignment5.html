@@ -1,0 +1,155 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>HCDE 439 Physical Computing Page</title> 
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head> 
+    <body> 
+
+        <div class="header">
+            <h2>External Voltage and Transistors</h2>
+            <p>
+            <img src="a5-board.jpeg" width=750></a>
+            </p>
+    
+            <h3>
+            Assignment
+            </h3>
+            <p>
+            For this assignment, I built a circuit that controls an LED strip with a remote controller.
+            A user can set the LED strip to four light settings: 3 different brightness settings and one fade setting. 
+            The power button on the remote controls turns off all lights. Buttons 1,2,3 and 5 control the lighting of the strip from least bright to most bright to fade, respectively
+            </p>
+    
+            <h3>
+            The Schematic
+            </h3>
+            <p>
+            <img src="a5-schematic.png" width=700></a>
+            </p>
+            <p>
+              Here is my schematic for the transistor, IR Receiver and one segment of the LED strip. <br> <br>
+              
+                White LED have a 3.3V drop  <br>
+
+                3 White LEDs per segment  <br>
+
+                3*3.3=9.9V  <br>
+                12V-9.9V = 2.1V  <br>
+                V=IR Ohm’s Law  <br>
+                2.1V = I (240Ω)  <br>
+                I = 0.00875 A = 8.75mA  <br>
+
+                8.75mA * 100 = 875mA  <br><br> 
+
+                This works out because the N-MOSFET transistors we are using can handle a much greater current than that.
+                
+
+            </p>
+
+            <h3>
+            The Code
+            </h3>
+            <pre>
+                <code>
+    // Carol Lei 
+    // A5 - Programs a remote to control an LED strip 
+    // Code comments with '*' come from Arduino Fade examples
+    
+    #include <IRremote.h>     // include remote library
+    
+    const int RECV_PIN = 11;  // remote pin as pin 11
+    IRrecv irrecv(RECV_PIN);  // create receiver object at pin
+    decode_results results;   // declare results type
+    
+    int led = 9;            // the PWM pin the LED is attached to
+    int brightness = 0;     // how bright the LED is
+    int fadeAmount = 5;     // how many points to fade the LED by
+    boolean fade = false;   // declare fade as false
+    
+    void setup() {
+        Serial.begin(9600);     //initialize serial at 9600 baud
+        irrecv.enableIRIn();    // start the receiver
+        irrecv.blink13(true);   // blink sensor when remote is clicked
+    
+        pinMode(led, OUTPUT);   // set LED to output
+    }
+    
+    void loop() {
+        if (irrecv.decode(&results)) {  // if remote is clicked
+        switch (results.value) {      // check the following cases
+            case 0xFF30CF:              // case Keypad button "1"
+            fade = false;             // set fade to false
+            analogWrite(led, 25);     // set the brightness to 25 brightness
+            break;                    // exit switch case
+    
+            case 0xFF18E7:              // case Keypad button "2"
+            fade = false;             // set fade to false
+            analogWrite(led, 85);     // set the brightness to 85 brightness
+            break;                    // exit switch case
+    
+            case 0xFF7A85:              // case Keypad button "3"
+            fade = false;             // set fade to false
+            analogWrite(led, 150);    // set the brightness to 150 brightness
+            break;                    // exit switch case
+    
+            case 0xFF38C7:              // case Keypad button "5"
+            fade = true;              // set fade to true 
+            break;                    // exit switch case
+    
+            case 0xFFA25D:              // case Keypad on/off button
+            fade = false;             // set fade to false
+            analogWrite(led, 0);      // turn LED off
+        }
+        irrecv.resume();              // receive next value from remote
+        }
+    
+        if (fade) {                     // if fade is true*
+        analogWrite(led, brightness); // set the brightness of pin 9*
+        brightness = brightness + fadeAmount;  // change the brightness for next time through the loop*
+        if (brightness <= 0 || brightness >= 255) {   // reverse the direction of the fading at the ends of the fade*
+            fadeAmount = -fadeAmount;           // reverse fade*
+        }
+        delay(30);        // delay for fade effect*
+        }
+    }
+                </code>
+            </pre>
+            <p> 
+            This is the code I used to develop the behavior I wanted. I am using analogWrite() to change the LED light brightness and behavior. 
+            See the comments in the code for further explanations.  
+            </p>
+
+
+            <h3>
+            My breadboard
+            </h3>
+            <p>
+              <img src="a5-circuitboard.jpeg" width=750></a>
+              </p>
+              <p>
+                  Here is my breadboard with a transistor connected to an LED strip, and a remote sensor with a remote controller. 
+                  <br>
+                  The LED strip is connected to a wall outlet.
+              </p>
+
+            <h3>
+            Remote Control!
+            </h3>
+            <p>
+            <img src="a5-highervoltage.gif" width=750></a>
+            </p>
+            <p>
+            Use the remote to control the LED strip light setting.
+            </p>
+
+
+        </div>
+        
+    </body>
+</html>
