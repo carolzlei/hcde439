@@ -1,0 +1,408 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>HCDE 439 Physical Computing Page</title> 
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head> 
+    <body> 
+
+        <div class="header">
+            <h2>Talking to the Web</h2>
+            <p>
+            <img src="a6-board.jpeg" width=750></a>
+            </p>
+    
+            <h3>
+            Assignment
+            </h3>
+            <p>
+            For this assignment, I built a circuit that controls an LED strip with a remote controller.
+            A user can set the LED strip to four light settings: 3 different brightness settings and one fade setting. 
+            The power button on the remote controls turns off all lights. Buttons 1,2,3 and 5 control the lighting of the strip from least bright to most bright to fade, respectively
+            </p>
+    
+            <h3>
+            The Schematic
+            </h3>
+            <p>
+            <img src="a5-schematic.png" width=700></a>
+            </p>
+            <p>
+              Here is my schematic for the transistor, IR Receiver and one segment of the LED strip. <br> <br>
+              
+                White LED have a 3.3V drop  <br>
+
+                3 White LEDs per segment  <br>
+
+                3*3.3=9.9V  <br>
+                12V-9.9V = 2.1V  <br>
+                V=IR Ohm’s Law  <br>
+                2.1V = I (240Ω)  <br>
+                I = 0.00875 A = 8.75mA  <br>
+
+                8.75mA * 100 = 875mA  <br><br> 
+
+                This works out because the N-MOSFET transistors we are using can handle a much greater current than that.
+                
+
+            </p>
+
+            <body>
+
+                <h3>Firmware</h3>
+                <p>Select from the following tabs to view code snippets.</p>
+                <div class="tab">
+                    <button class="tablinks" onclick="openCity(event, 'arduino to web ino')" id="defaultOpen" >Arduino to Web INO</button>
+                    <button class="tablinks" onclick="openCity(event, 'arduino to web p5')">Arduino to Web P5</button>
+                    <button class="tablinks" onclick="openCity(event, 'web to arduino ino')">Web to Arduino INO</button>
+                    <button class="tablinks" onclick="openCity(event, 'web to arduino p5')">Web to Arduino P5</button>
+                </div>
+
+                
+                <div id="arduino to web ino" class="tabcontent">
+                    <pre>
+                        <code>
+    // Joystick to web commuication 
+    // Arduino reading two inputs
+    // Sends to web as a printed array
+    
+    int x = A0;   // xvalue of joystick at A0 pin
+    int y = A1;   // yvalue of joystick at A1 pin
+    int xval = 0; // initate xval
+    int yval = 0; // initate yval
+    
+    void setup() {
+        Serial.begin(9600); // initiate serial at 9600 baud
+        Serial.setTimeout(10); // set the timeout for parseInt
+    }
+    
+    void loop() {
+        xval = analogRead(x); // analog read pin A0
+        yval = analogRead(y); // analog read pin A1
+        
+        Serial.print("[");  // print to console
+        Serial.print(xval); // print to console
+        Serial.print(",");  // print to console
+        Serial.print(yval); // print to console
+        Serial.println("]");  // print to console
+        
+    }                                
+                        </code>
+                    </pre>
+                </div>
+                
+                <div id="arduino to web p5" class="tabcontent">
+                    <pre>
+                        <code>
+    // receives data from joystick 
+    // changes direction of wave visualization
+
+    var serial; // variable to hold an instance of the serialport library
+    var portName = '/dev/tty.usbmodem11101' //rename to the name of your port
+    var dataarray = []; //some data coming in over serial!
+    
+    
+    let t = 0; // time variable
+    
+    let red = 0; // red variable
+    let blue = 0; // blue variable
+    let green = 0;  // green variable
+    
+    function setup() {
+        serial = new p5.SerialPort();       // make a new instance of the serialport library
+        serial.on('list', printList);       // set a callback function for the serialport list event
+        serial.on('connected', serverConnected); // callback for connecting to the server
+        serial.on('open', portOpen);        // callback for the port opening
+        serial.on('data', serialEvent);     // callback for when new data arrives
+        serial.on('error', serialError);    // callback for errors
+        serial.on('close', portClose);      // callback for the port closing
+        
+        serial.list();                      // list the serial ports
+        serial.open(portName);              // open a serial port
+        createCanvas(1439, 804);
+        background(0x08, 0x16, 0x40);
+        noStroke();
+        fill(204, 204, 255);
+    }
+        
+    // get the list of ports:
+    function printList(portList) {
+        // portList is an array of serial port names
+        for (var i = 0; i < portList.length; i++) {
+        // Display the list the console:
+        print(i + " " + portList[i]);
+        }
+    }
+    
+    function serverConnected() {
+        print('connected to server.');
+    }
+        
+    function portOpen() {
+        print('the serial port opened.')
+    }
+        
+    function serialError(err) {
+        print('Something went wrong with the serial port. ' + err);
+    }
+        
+    function portClose() {
+        print('The serial port closed.');
+    }
+    
+    function serialEvent() {
+        if (serial.available()) {
+        var datastring = serial.readLine(); // readin some serial
+        var newarray; 
+        try {
+            newarray = JSON.parse(datastring); // can we parse the serial
+            } catch(err) {
+                //console.log(err);
+        }
+        if (typeof(newarray) == 'object') {
+            dataarray = newarray;
+        }
+        console.log("got back " + datastring);
+        } 
+    }
+    
+    function draw() {
+        background(10, 10); // translucent background (creates trails)
+    
+        // make a x and y grid of ellipses
+        for (let x = 0; x <= width; x = x + 30) {
+        for (let y = 0; y <= height; y = y + 30) {
+            // starting point of each circle depends on mouse position
+            const xAngle = map(dataarray[0], 0, width, -4 * PI, 4 * PI, true);
+            const yAngle = map(dataarray[1], 0, height, -4 * PI, 4 * PI, true);
+            // and also varies based on the particle's location
+            const angle = xAngle * (x / width) + yAngle * (y / height);
+    
+            // each particle moves in a circle
+            const myX = x + 20 * cos(2 * PI * t + angle);
+            const myY = y + 20 * sin(2 * PI * t + angle);
+    
+            ellipse(myX, myY, 10); // draw particle
+        }
+        }
+    
+        t = t + 0.01; // update time
+    }
+    
+                        </code>
+                    </pre>
+                </div>
+
+                <div id="web to arduino ino" class="tabcontent">
+                    <pre>
+                        <code>
+    // Web to Arduino communication 
+    // Reads from web input
+    // If user presses 'f', RGB LED fades through colors
+    // If user presses space bar, yellow LED is turned on/off
+    
+    #include<stdbool.h> // add boolean library
+    
+    const int R = 11; // add LED setup
+    const int G = 10; // add LED setup
+    const int B = 9; // add LED setup
+    
+    const int Y = 5; // add LED setup
+    
+    bool yellow = false; // initiate yellow boolean
+    bool fade = false;  // initiate fade boolean
+        
+    int red = 254; // initiate LED setup
+    int green = 1; // initiate LED setup
+    int blue = 127; // initiate LED setup
+    
+    int rFade = 5;  // initiate fade of red LED
+    int gFade = -5; // initiate fade of green LED
+    int bFade = 5;  // initiate fade of blue LED
+    
+    void setup() {
+        Serial.begin(9600);    // initialize serial communications
+        Serial.setTimeout(10); // set the timeout for parseInt
+        
+        pinMode(R, OUTPUT);    // initialize the Red LED as output
+        pinMode(G, OUTPUT);    // initialize the Green LED as output
+        pinMode(B, OUTPUT);    // initialize the Blue LED as output
+    
+        pinMode(Y, OUTPUT);    // initialize the Blue LED as output
+    }
+        
+    void loop() {
+        if (Serial.available() > 0) {   // if there's serial data 
+        int inByte = Serial.read();   // read it
+        Serial.write(inByte);         // send it back out as raw binary data
+        
+        if(inByte == 32){             // if space is pressed
+            yellow = !yellow;           // switch yellow boolean value
+        } else if(inByte == 102){     // if 'f' is pressed
+            fade = !fade;               // switch fade boolean value
+        }
+        }
+        
+        if(yellow){               // if yellow is true
+        digitalWrite(Y, HIGH);  // turn yellow LED on
+        } else {
+        digitalWrite(Y, LOW);   // turn yellow LED off
+        }
+    
+        if(fade){                 // if fade is true
+        analogWrite(R, red);    // analog write red LED value
+        analogWrite(G, green);  // analog write green LED value
+        analogWrite(B, blue);   // analog write blue LED value
+        
+        red = red + rFade;        // change the values of the LEDs
+        green = green + gFade;    // change the values of the LEDs
+        blue = blue + bFade;      // change the values of the LEDs
+        
+        if (red >= 255 || red <= 0) { // if red is out of 0 to 255 range 
+            rFade = rFade * -1;         // set fade direction
+        }
+        
+        if (green >= 255 || green <= 0) { // if green is out of 0 to 255 range 
+            gFade = gFade * -1;             // set fade direction
+        }
+        
+        if (blue >= 255 || blue <= 0) { // if blue is out of 0 to 255 range 
+            bFade = bFade * -1;           // set fade direction
+        }
+        delay(30); // to see fade effect
+        } else {
+        analogWrite(R, 0);  // set red to 0
+        analogWrite(G, 0);  // set green to 0
+        analogWrite(B, 0);  // set blue to 0
+        }
+    }
+                        </code>
+                    </pre>
+                  </div>
+                
+                <div id="web to arduino p5" class="tabcontent">
+                    <pre>
+                        <code>
+    // sends web input to arduino 
+
+    var serial; // variable to hold an instance of the serialport library
+    var portName = '/dev/tty.usbmodem11101' //rename to the name of your port
+    var dataarray = []; //some data coming in over serial!
+    
+    function setup() {
+        serial = new p5.SerialPort();       // make a new instance of the serialport library
+        serial.on('list', printList);       // set a callback function for the serialport list event
+        serial.on('connected', serverConnected); // callback for connecting to the server
+        serial.on('open', portOpen);        // callback for the port opening
+        serial.on('data', serialEvent);     // callback for when new data arrives
+        serial.on('error', serialError);    // callback for errors
+        serial.on('close', portClose);      // callback for the port closing
+        
+        serial.list();                      // list the serial ports
+        serial.open(portName);              // open a serial port
+    }
+        
+    // get the list of ports:
+    function printList(portList) {
+        // portList is an array of serial port names
+        for (var i = 0; i < portList.length; i++) {
+        // Display the list the console:
+        print(i + " " + portList[i]);
+        }
+    }
+    
+    function serverConnected() {
+        print('connected to server.');
+    }
+        
+    function portOpen() {
+        print('the serial port opened.')
+    }
+        
+    function serialError(err) {
+        print('Something went wrong with the serial port. ' + err);
+    }
+        
+    function portClose() {
+        print('The serial port closed.');
+    }
+    
+    function serialEvent() {
+        if (serial.available()) {          
+            inData = serial.read();   // read the data
+            console.log("got back " + inData);   // console log the read data
+        }
+    }
+    
+    function keyPressed() {
+        //console.log("writing key");
+        serial.write(key);    // write key data to serial
+    }
+    
+    function draw() {
+        text("inData: " + inData, 100, 400);   // display this text in this specified area of the canvas
+    }
+                        </code>
+                    </pre>
+                </div>
+                
+                <script>
+                function openCity(evt, cityName) {
+                  var i, tabcontent, tablinks;
+                  tabcontent = document.getElementsByClassName("tabcontent");
+                  for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                  }
+                  tablinks = document.getElementsByClassName("tablinks");
+                  for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                  }
+                  document.getElementById(cityName).style.display = "block";
+                  evt.currentTarget.className += " active";
+                }
+                </script>
+                   
+                </body>
+            <p> 
+            This is the code I used to develop the behavior I wanted. I am using analogWrite() to change the LED light brightness and behavior. 
+            See the comments in the code for further explanations.  
+            </p>
+
+
+            <h3>
+            My breadboard
+            </h3>
+            <p>
+              <img src="a5-circuitboard.jpeg" width=750></a>
+              </p>
+              <p>
+                  Here is my breadboard with a transistor connected to an LED strip, and a remote sensor with a remote controller. 
+                  <br>
+                  The LED strip is connected to a wall outlet.
+              </p>
+
+            <h3>
+            Remote Control!
+            </h3>
+            <p>
+            <img src="a5-highervoltage.gif" width=750></a>
+            </p>
+            <p>
+            Use the remote to control the LED strip light setting.
+            </p>
+
+
+        </div>
+
+        <script>
+            // Get the element with id="defaultOpen" and click on it
+            document.getElementById("defaultOpen").click();
+        </script>
+        
+    </body>
+</html>
