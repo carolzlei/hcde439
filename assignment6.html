@@ -21,35 +21,19 @@
             Assignment
             </h3>
             <p>
-            For this assignment, I built a circuit that controls an LED strip with a remote controller.
-            A user can set the LED strip to four light settings: 3 different brightness settings and one fade setting. 
-            The power button on the remote controls turns off all lights. Buttons 1,2,3 and 5 control the lighting of the strip from least bright to most bright to fade, respectively
+                For this assignment, I am communicating from my Arduino to the web, and from the web to my Arduino. 
+                For a joystick on my Arduino, I am controlling the movement of a wave visualization on the web. 
+                For the web, I will control the light behavior of the yellow and RGB LED. 
             </p>
     
             <h3>
             The Schematic
             </h3>
             <p>
-            <img src="a5-schematic.png" width=700></a>
+            <img src="a6-schematic.png" width=700></a>
             </p>
             <p>
-              Here is my schematic for the transistor, IR Receiver and one segment of the LED strip. <br> <br>
-              
-                White LED have a 3.3V drop  <br>
-
-                3 White LEDs per segment  <br>
-
-                3*3.3=9.9V  <br>
-                12V-9.9V = 2.1V  <br>
-                V=IR Ohm’s Law  <br>
-                2.1V = I (240Ω)  <br>
-                I = 0.00875 A = 8.75mA  <br>
-
-                8.75mA * 100 = 875mA  <br><br> 
-
-                This works out because the N-MOSFET transistors we are using can handle a much greater current than that.
-                
-
+                Here is the schematic and calculations for my circuit. 
             </p>
 
             <body>
@@ -369,7 +353,7 @@
                    
                 </body>
             <p> 
-            This is the code I used to develop the behavior I wanted. I am using analogWrite() to change the LED light brightness and behavior. 
+            This is the code I used to develop the behavior I wanted. I am using analogWrite() to change the RGB LED behavior. 
             See the comments in the code for further explanations.  
             </p>
 
@@ -378,22 +362,34 @@
             My breadboard
             </h3>
             <p>
-              <img src="a5-circuitboard.jpeg" width=750></a>
-              </p>
-              <p>
-                  Here is my breadboard with a transistor connected to an LED strip, and a remote sensor with a remote controller. 
-                  <br>
-                  The LED strip is connected to a wall outlet.
-              </p>
-
-            <h3>
-            Remote Control!
-            </h3>
-            <p>
-            <img src="a5-highervoltage.gif" width=750></a>
+              <img src="a6-board1.jpeg" width=600></a>
             </p>
             <p>
-            Use the remote to control the LED strip light setting.
+                Here is my breadboard with a joystick and two LEDs, one yellow LED and an RGB LED. 
+            </p>
+
+            <p>
+                <img src="a6-joystick.jpeg" width=600></a>
+            </p>
+            <p>
+                Here is my joystick connected to the Arduino.
+            </p>
+
+            <h3>
+            Web communication!
+            </h3>
+            <p>
+            <img src="a6-web.gif"  height=600></a>
+            </p>
+            <p>
+            Use the joystick to control the wave direction.
+            </p>
+
+            <p>
+            <img src="a6-type.gif" height=600></a>
+            </p>
+            <p>
+            Press 'f' or the space bar to see some LED action.
             </p>
 
 
