@@ -1,0 +1,184 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>HCDE 439 Physical Computing Page</title> 
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head> 
+    <body> 
+
+        <div class="header">
+            <h2>Bedside table lamp</h2>
+            <p>
+            <img src="fa/8-lamp.jpeg" height=600></a>
+            </p>
+    
+            <h3>
+            Product Concept
+            </h3>
+            <p>
+            For this assignment, I am designing and building a bedside table lamp. 
+            This lamp will have a touch sensor to turn the light on and off. The light will come from an LED strip. The lamp itself will be 
+            laser cut and 3D-printed. The base of the lamp will be laser cut, and the lamp shade will be 3D-printed. 
+            </p>
+
+            <h3>
+                Design Process
+            </h3>
+            <p>
+                I started with building the circuit board and writing the code for the firmware. 
+                The code would take capacitive touch input data and turn the light on and off accordingly. 
+                Then, I put the circuit into a lowfidelity cardboard prototype of my lamp. 
+            </p>
+            <h3>
+            The Schematic
+            </h3>
+            <p>
+            <img src="a6-schematic.png" width=700></a>
+            </p>
+            <p>
+                Here is the schematic and calculations for my circuit. 
+            </p>
+            <p>
+                <img src="fa/lofi.gif" height=600></a>
+            </p>
+            <p>
+                This is a quick demo of how my low fidelity prototype was working. At this point, I needed to work on the high fidelity designs, as well as touch callibration.
+            </p>
+
+            <h3>Moving into higher fidelity</h3>
+            <p>
+                I started 3D printing my lamp shade. For the sake of time, I decided to print a model from Cults3D. I printed this <a href="https://cults3d.com/en/3d-model/home/zuzanna-lamp">lamp shade model</a>.
+            </p>
+            <p>
+                <img src="fa/1-3dprint.JPG" height=600></a>
+            </p>
+            <p>
+                While my lamp shade printed, I started working on the lamp base. I initially intended to print a base, but the print failed. I pivoted to laser cutting a base. 
+                For sleekness I wanted to design a rounded base, which means I would need to laser cut a kerfing pattern. 
+                This proved harder than I thought, especially with little experience with kerfing, but nonetheless, I gave it a shot!
+                <br> <br>
+                3 of the 4 rounded edged cracked once I started bending the plywood. I taped the corners together just to have a base to store my breadboard. 
+            </p>
+            <p><img src="fa/2-lasercut.jpeg" height=600></a>
+            <img src="fa/3-lasercut.jpeg" width=600></a></p>
+            
+            <p>Once my lamp shade finished printing, I put the prototype together.</p>
+            <p>
+                <img src="fa/4-lasercut3dprint.jpeg" height=600></a>
+            </p>
+            <p>Looking at this prototype, I decided the laser cut plywood base was too bulky and did not fit with the light transparent lamp shape, so I went back to 3D print the base.
+                <br> <br>
+                First, I mockuped a low fidelity cardboard prototype. 
+            </p>
+            <p>
+                <img src="fa//5-redesign.jpeg" height=600></a>
+                <img src="fa//5a-redesign.jpeg" height=600></a>
+            </p>
+            <p>Satisfied with this design, I bought some 400 point breadboards, and started modeling my lamp base in OnShape.</p>
+
+            <h3>Piecing the design together</h3>
+            <p>
+                With all my parts designed and printed, my lamp was ready for assembly and further callibration. 
+            </p>
+            <p>
+                <img src="fa/7-allparts.JPG" height=600></a>
+            </p>
+
+            <body>
+            <h3>Firmware</h3>
+                    <pre>
+                        <code>
+    // Carol Lei 
+    // Touch sensor lamp
+    // Grab the quarter to turn on the lamp 
+    
+    #include <CapacitiveSensor.h> // include Capacitive Sensor library
+    
+    CapacitiveSensor cs_4_2 = CapacitiveSensor(4,2);   // 1 megohm resistor between pins 4 & 2, pin 2 is sensor pin, add wire
+    
+    int sensorValue = 0;         // the sensor value
+    int sensorMin = 2000;        // minimum sensor value, set to higher than expected
+    int sensorMax = 0;           // maximum sensor value, set to lower than expected
+    
+    int led = 9;            // the PWM pin the LED is attached to
+    
+    bool touch = false; // touch boolean to turn the LED on/off
+    
+    void setup() {
+        Serial.begin(9600); // initiate serial to 9600 baud
+    
+        while (millis() < 5000) {       // run for 5 seconds
+        sensorValue = cs_4_2.capacitiveSensor(30);  // gather sensor value from touch
+    
+        if(sensorValue > sensorMax) { // if sensor value is greater than current max
+            sensorMax = sensorValue;    // record the maximum sensor value
+        }
+        if(sensorValue < sensorMin){  // if sensor value is less than current min
+            sensorMin = sensorValue;    // record the minimum sensor value
+        }
+        }
+        
+        pinMode(led, OUTPUT);   // set LED to output
+    }
+    
+    void loop() {
+        sensorValue =  cs_4_2.capacitiveSensor(30); // get sensor value
+        // Serial.print("Sensor value is ");
+        // Serial.println(sensorValue);
+        sensorValue = map(sensorValue, sensorMin, sensorMax, 0, 180);   // map sensed value to 0, 180
+        // Serial.println(sensorValue);
+    
+        if(sensorValue >= 50){  // if the mapped value is greater than 50
+        touch = !touch;   // change the boolean value of touch
+        }
+    
+        if(touch){    // if touch is true
+        analogWrite(led, 255);  // turn the LED strip on to full brightness
+        delay(1000);  // wait 1 second 
+        } else {
+        analogWrite(led, 0);  // turn the LED strip off
+        delay(1000);   // wait half a second
+        }
+    }
+                        </code>
+                    </pre>
+            <p> 
+            This is the code I used to develop the behavior I wanted.
+            See the comments in the code for further explanations.  
+            </p>
+
+            <p>
+                <img src="fa/callibrated.gif"  height=600></a>
+            </p>
+            <p>The callibration was improving with the new firmware. A big key was callibrating with the touch sensor already in place, clipped to the lamp base.</p>
+
+            <h3>
+            My breadboard
+            </h3>
+            <p>
+              <img src="fa/circuitboard.jpeg" width=600></a>
+              <img src="fa/circuitboard1.jpeg"  height=450></a>
+            </p>
+            <p>
+                Here is my breadboard with a capacitive touch sensor and LED strip lights.
+            </p>
+
+            <h3>
+            Bedside Table Lamp!
+            </h3>
+            <p>
+            <img src="fa/bedside.gif"  height=600></a>
+            </p>
+            <p>
+            Use the touch sensor to turn the lamp on and off. 
+            </p>
+
+        </div>
+        
+    </body>
+</html>
