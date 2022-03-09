@@ -128,10 +128,7 @@
     
     void loop() {
         sensorValue =  cs_4_2.capacitiveSensor(30); // get sensor value
-        // Serial.print("Sensor value is ");
-        // Serial.println(sensorValue);
         sensorValue = map(sensorValue, sensorMin, sensorMax, 0, 180);   // map sensed value to 0, 180
-        // Serial.println(sensorValue);
     
         if(sensorValue >= 50){  // if the mapped value is greater than 50
         touch = !touch;   // change the boolean value of touch
